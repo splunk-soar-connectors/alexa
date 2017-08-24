@@ -1,7 +1,7 @@
 # --
 # File: alexa_connector.py
 #
-# Copyright (c) Phantom Cyber Corporation, 2016
+# Copyright (c) Phantom Cyber Corporation, 2016-2017
 #
 # This unpublished material is proprietary to Phantom Cyber.
 # All rights reserved. The methods and
@@ -56,10 +56,10 @@ class AlexaConnector(BaseConnector):
         params["Timestamp"] = self._get_timestamp()
         params["Signature"] = self._sign(params)
 
-        url = "http://{0}/".format(ALEXA_AWIS_HOST)
+        url = "https://{0}/".format(ALEXA_AWIS_HOST)
 
         try:
-            response = requests.get(url, params=params)
+            response = requests.get(url, verify=self.get_config().get("verify_server_cert"), params=params)
         except Exception as e:
             return (phantom.APP_ERROR, "Could not make REST call {}".format(e))
 
@@ -107,7 +107,7 @@ class AlexaConnector(BaseConnector):
 
     def _test_connectivity(self):
         self.save_progress("Querying AWIS...")
-
+        self.save_progress("Verify server certificate: {}".format(self.get_config().get("verify_server_cert")))
         param = {
             "Action": "UrlInfo",
             "Url": "http://www.amazon.com/",
