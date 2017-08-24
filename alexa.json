@@ -10,10 +10,10 @@
   "product_name": "Alexa",
   "product_version_regex": ".*",
   "logo": "alexa.png",
-  "min_phantom_version": "2.0.264",
+  "min_phantom_version": "3.0.159",
   "publisher": "Phantom",
   "package_name": "phantom_alexa",
-  "license": "Copyright (c) Phantom Cyber Corporation 2016",
+  "license": "Copyright (c) Phantom Cyber Corporation 2016-2017",
   "configuration": {
     "access_id": {
       "description": "Access ID",
