@@ -30,7 +30,6 @@ import requests
 import simplejson as json
 
 
-
 class AlexaConnector(BaseConnector):
     ACTION_ID_TEST_ASSET_CONNECTIVITY = "test_connectivity"
     ACTION_ID_LOOKUP_URL = "lookup_url"
