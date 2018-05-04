@@ -21,14 +21,13 @@ from phantom.action_result import ActionResult
 from alexa_consts import *
 
 # Any imports that this app may need that are not phantom-based or app-based
-import base64
+from urllib import urlencode
 import datetime
 import hashlib
 import hmac
-import urllib
-import simplejson as json
 import xmltodict
 import requests
+import simplejson as json
 
 
 class AlexaConnector(BaseConnector):
@@ -38,6 +37,9 @@ class AlexaConnector(BaseConnector):
     def __init__(self):
 
         super(AlexaConnector, self).__init__()
+
+        self._access_id = None
+        self._secret_key = None
 
     def initialize(self):
 
@@ -50,60 +52,90 @@ class AlexaConnector(BaseConnector):
 
     def _make_rest_call(self, params):
 
-        params["AWSAccessKeyId"] = self._access_id
-        params["SignatureMethod"] = "HmacSHA1"
-        params["SignatureVersion"] = "2"
-        params["Timestamp"] = self._get_timestamp()
-        params["Signature"] = self._sign(params)
-
-        url = "https://{0}/".format(ALEXA_AWIS_HOST)
+        url, headers = self._sign(params)
 
         try:
-            response = requests.get(url, verify=True, params=params)
+            response = requests.get(url,
+                                    headers=headers,
+                                    verify=True)
         except Exception as e:
-            return (phantom.APP_ERROR, "Could not make REST call {}".format(e))
+            return phantom.APP_ERROR, "Could not make REST call {}".format(e)
 
-        if (response.status_code != 200):
-            return (phantom.APP_ERROR, "REST call failed. {}".format((xmltodict.parse(response.text))))
+        if response.status_code != 200:
+            return phantom.APP_ERROR, "REST call failed. {}".format(response.text)
 
         try:
-            # Someone tell my why this isn't a json response.  Now I have to import xmltodict to parse it...
             resp_json = xmltodict.parse(response.text)
         except Exception:
-            return (phantom.APP_ERROR, "Error while parsing response to JSON. {}", format(response))
+            return phantom.APP_ERROR, "Error while parsing response to JSON. {}", format(response)
 
         return phantom.APP_SUCCESS, resp_json
 
-    def _get_timestamp(self):
-        '''
-        Gets the current timestamp in a format that is specified by AWIS
-        :return: timestamp in str
-        '''
-        return datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    def _get_signing_key(self, key, credential_list):
+        """ Process the key and other credentials to build an AWS signing key.
 
-    def _sign(self, params):
-        '''
-        Gets an AWIS-specific signature to be used in the REST call
-        :return: signature
-        '''
+        Args:
+            key (str): AWS secret key
+            credential_list (list): list of additional credentials needed to sign the request
 
-        # Builds the string for the message, as required by AWIS.
-        message = "\n".join(["GET", ALEXA_AWIS_HOST, "/", self._urlencode(params)])
+        Returns:
+            key (HMAC Digest): Signing key
+        """
+        key = ('AWS4' + key).encode('utf-8')
+        for credential in credential_list:
+            key = hmac.new(key, credential.encode('utf-8'), hashlib.sha256).digest()
+            self.debug_print(credential)
+        return key
 
-        # Creates a signature based upon the access key and the message, hashed with sha1.
-        hmac_signature = hmac.new(str(self._secret_key), message, digestmod=hashlib.sha1)
+    def _sign(self, request_params):
+        """ Create URL and signature headers based on AWS V4 signing process.
 
-        # Pulls the encoded signature from the signature.
-        signature = base64.b64encode(hmac_signature.digest())
+        Args:
+            request_params (dict): Parameters for request
 
-        return signature
+        Returns:
+            request_url (str): URL to use in request, including params
+            headers (dict): Headers needed to make AWS request
+        """
+        method = 'GET'
+        service = 'awis'
+        region = 'us-west-1'
+        endpoint = '{}.{}.amazonaws.com'.format(service, region)
+        request_parameters = urlencode([(key, request_params[key]) for key in sorted(request_params.keys())])
 
-    def _urlencode(self, params):
-        # Params must be sorted alphabetically before being encoded.
+        # Create a date for headers and the credential string
+        t = datetime.datetime.utcnow()
+        amzdate = t.strftime('%Y%m%dT%H%M%SZ')
+        datestamp = t.strftime('%Y%m%d')  # Date w/o time, used in credential scope
 
-        params = [(key, params[key]) for key in sorted(params.keys())]
+        # Create canonical request
+        canonical_uri = '/api'
+        canonical_querystring = request_parameters
+        canonical_headers = 'host:{}\nx-amz-date:{}\n'.format(endpoint, amzdate)
+        signed_headers = 'host;x-amz-date'
 
-        return urllib.urlencode(params)
+        payload_hash = hashlib.sha256(''.encode('utf8')).hexdigest()
+        canonical_request = '\n'.join([method, canonical_uri, canonical_querystring, canonical_headers, signed_headers, payload_hash])
+
+        # Create string to sign
+        credential_list = [datestamp, region, service, 'aws4_request']
+        credential_scope = '/'.join(credential_list)
+        algorithm = 'AWS4-HMAC-SHA256'
+        string_to_sign = '\n'.join([algorithm, amzdate, credential_scope, hashlib.sha256(canonical_request.encode('utf8')).hexdigest()])
+
+        # Calculate signature
+        signing_key = self._get_signing_key(self._secret_key, credential_list)
+
+        # Sign the string_to_sign using the signing_key
+        signature = hmac.new(signing_key, string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
+
+        # Add signing information to the request
+        authorization_header = '{} Credential={}/{}, SignedHeaders={}, Signature={}'.format(algorithm, self._access_id, credential_scope, signed_headers, signature)
+        headers = {'X-Amz-Date': amzdate, 'Authorization': authorization_header, 'Content-Type': 'application/xml', 'Accept': 'application/xml'}
+
+        # Create request url
+        request_url = 'https://{}{}?{}'.format(endpoint, canonical_uri, canonical_querystring)
+        return request_url, headers
 
     def _test_connectivity(self):
         self.save_progress("Querying AWIS...")
@@ -115,7 +147,7 @@ class AlexaConnector(BaseConnector):
 
         ret_val, response = self._make_rest_call(param)
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
 
             self.save_progress("Rest call failed. {}".format(response))
 
@@ -139,8 +171,8 @@ class AlexaConnector(BaseConnector):
 
         ret_val, response = self._make_rest_call(param)
 
-        if (phantom.is_fail(ret_val)):
-            return (action_result.set_status(phantom.APP_ERROR, "Error retrieving information", response))
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR, "Error retrieving information", response)
 
         action_result.add_data(response)
 
@@ -148,7 +180,7 @@ class AlexaConnector(BaseConnector):
 
         action_result.set_summary({"rank": rank})
 
-        return (action_result.set_status(phantom.APP_SUCCESS))
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, params):
 
@@ -156,18 +188,18 @@ class AlexaConnector(BaseConnector):
 
         ret_val = phantom.APP_SUCCESS
 
-        if (action == self.ACTION_ID_LOOKUP_URL):
+        if action == self.ACTION_ID_LOOKUP_URL:
             ret_val = self._lookup_url(params)
-        elif (action == self.ACTION_ID_TEST_ASSET_CONNECTIVITY):
+        elif action == self.ACTION_ID_TEST_ASSET_CONNECTIVITY:
             ret_val = self._test_connectivity()
         return ret_val
 
 
 if __name__ == '__main__':
-    '''
+    """
     This block gets executed during debugging.  Does not affect regular action handling
 
-    '''
+    """
 
     # Imports
     import sys
