@@ -5,7 +5,7 @@
     "type": "reputation",
     "main_module": "alexa_connector.pyc",
     "app_version": "1.0.8",
-    "utctime_updated": "2018-05-07T22:42:02.000000Z",
+    "utctime_updated": "2018-09-28T00:01:30.000000Z",
     "product_vendor": "Amazon",
     "product_name": "Alexa",
     "product_version_regex": ".*",
