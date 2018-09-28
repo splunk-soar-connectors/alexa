@@ -1,7 +1,7 @@
 {
     "appid": "2facaba1-0291-478c-9c4a-2cc094a99e9b",
     "name": "Alexa",
-    "description": "Connects to Alexa Web Information Services for <b>lookup url</b>.",
+    "description": "This app implements investigative actions using Alexa Web Information Services",
     "type": "reputation",
     "main_module": "alexa_connector.pyc",
     "app_version": "1.0.8",
@@ -11,10 +11,10 @@
     "product_version_regex": ".*",
     "logo": "logo_alexa.svg",
     "logo_dark": "logo_alexa_dark.svg",
-    "min_phantom_version": "3.0.159",
+    "min_phantom_version": "3.5.210",
     "publisher": "Phantom",
     "package_name": "phantom_alexa",
-    "license": "Copyright (c) Phantom Cyber Corporation 2016-2017",
+    "license": "Copyright (c) 2016-2018 Splunk Inc.",
     "configuration": {
         "access_id": {
             "description": "Access ID",
@@ -25,7 +25,7 @@
         "secret_key": {
             "description": "Secret key",
             "required": true,
-            "data_type": "string",
+            "data_type": "password",
             "order": 1
         }
     },
@@ -277,7 +277,7 @@
         },
         {
             "action": "test connectivity",
-            "description": "Validates asset configuration for connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
             "verbose": "",
             "type": "test",
             "read_only": true,
