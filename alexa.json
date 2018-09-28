@@ -1,20 +1,20 @@
 {
     "appid": "2facaba1-0291-478c-9c4a-2cc094a99e9b",
     "name": "Alexa",
-    "description": "Connects to Alexa Web Information Services for <b>lookup url</b>.",
+    "description": "This app implements investigative actions using Alexa Web Information Services",
     "type": "reputation",
     "main_module": "alexa_connector.pyc",
-    "app_version": "1.0.7",
-    "utctime_updated": "2018-01-26T00:47:17.000000Z",
+    "app_version": "1.0.9",
+    "utctime_updated": "2018-09-28T00:03:19.000000Z",
     "product_vendor": "Amazon",
     "product_name": "Alexa",
     "product_version_regex": ".*",
     "logo": "logo_alexa.svg",
     "logo_dark": "logo_alexa_dark.svg",
-    "min_phantom_version": "3.0.159",
+    "min_phantom_version": "3.5.210",
     "publisher": "Phantom",
     "package_name": "phantom_alexa",
-    "license": "Copyright (c) Phantom Cyber Corporation, 2016-2018",
+    "license": "Copyright (c) 2016-2018 Splunk Inc.",
     "configuration": {
         "access_id": {
             "description": "Access ID",
@@ -25,7 +25,7 @@
         "secret_key": {
             "description": "Secret key",
             "required": true,
-            "data_type": "string",
+            "data_type": "password",
             "order": 1
         }
     },
@@ -44,7 +44,8 @@
                     "order": 0,
                     "data_type": "string",
                     "contains": [
-                        "url"
+                        "url",
+                        "domain"
                     ],
                     "primary": true
                 }
@@ -57,6 +58,18 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url",
+                        "domain"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.aws:UrlInfoResponse.@xmlns:aws",
                     "data_type": "string"
                 },
@@ -65,43 +78,19 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:DataUrl.#text",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:OperationRequest.aws:RequestId",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:DataUrl.@type",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:ResponseStatus.@xmlns:aws",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:Categories.aws:CategoryData.*.aws:Title",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:ResponseStatus.aws:StatusCode",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:Categories.aws:CategoryData.*.aws:AbsolutePath",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:Title",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:DataUrl.#text",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:DataUrl.@type",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:NavigableUrl",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:Speed.aws:Percentile",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:Speed.aws:MedianLoadTime",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:AdultContent",
                     "data_type": "string"
                 },
                 {
@@ -121,7 +110,18 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:SiteData.aws:Title",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:LinksInCount",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:OwnedDomains.aws:OwnedDomain.*.aws:Domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:OwnedDomains.aws:OwnedDomain.*.aws:Title",
                     "data_type": "string"
                 },
                 {
@@ -133,94 +133,47 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:AdultContent",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:SiteData.aws:Title",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:LinksInCount",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:Speed.aws:MedianLoadTime",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:OwnedDomains.aws:OwnedDomain.*.aws:Title",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:Speed.aws:Percentile",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:OwnedDomains.aws:OwnedDomain.*.aws:Domain",
-                    "data_type": "string",
-                    "contains": [
-                        "domain"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:Rank",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:Categories.aws:CategoryData.*.aws:AbsolutePath",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:DataUrl.#text",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:Categories.aws:CategoryData.*.aws:Title",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:DataUrl.@type",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:DataUrl.#text",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Rank.aws:Delta",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:DataUrl.@type",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Rank.aws:Value",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:DataUrl.#text",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Reach.aws:Rank.aws:Delta",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:DataUrl.@type",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Reach.aws:Rank.aws:Value",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:NavigableUrl",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Reach.aws:PerMillion.aws:Delta",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Reach.aws:PerMillion.aws:Value",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:Rank.aws:Delta",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:Rank.aws:Value",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:PerUser.aws:Delta",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:PerUser.aws:Value",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:PerMillion.aws:Delta",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:PerMillion.aws:Value",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:TimeRange.aws:Months",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:TimeRange.aws:Days",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:ContributingSubdomains.aws:ContributingSubdomain.*.aws:Reach.aws:Percentage",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:Title",
                     "data_type": "string"
                 },
                 {
@@ -236,38 +189,87 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:ContributingSubdomains.aws:ContributingSubdomain.*.aws:Reach.aws:Percentage",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:ContributingSubdomains.aws:ContributingSubdomain.*.aws:TimeRange.aws:Months",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:ResponseStatus.@xmlns:aws",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:DataUrl.#text",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:ResponseStatus.aws:StatusCode",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:DataUrl.@type",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:OperationRequest.aws:RequestId",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:Rank",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:PerMillion.aws:Delta",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:PerMillion.aws:Value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:PerUser.aws:Delta",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:PerUser.aws:Value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:Rank.aws:Delta",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:PageViews.aws:Rank.aws:Value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Rank.aws:Delta",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Rank.aws:Value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Reach.aws:PerMillion.aws:Delta",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Reach.aws:PerMillion.aws:Value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Reach.aws:Rank.aws:Delta",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:Reach.aws:Rank.aws:Value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:TimeRange.aws:Days",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics.aws:UsageStatistic.*.aws:TimeRange.aws:Months",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.url",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 }
             ],
@@ -275,7 +277,7 @@
         },
         {
             "action": "test connectivity",
-            "description": "Validates asset configuration for connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
             "verbose": "",
             "type": "test",
             "read_only": true,
