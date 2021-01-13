@@ -3,7 +3,7 @@
     "name": "Alexa",
     "description": "This app implements investigative actions using Alexa Web Information Services",
     "type": "reputation",
-    "main_module": "alexa_connector.pyc",
+    "main_module": "alexa_connector.py",
     "app_version": "2.0.0",
     "utctime_updated": "2018-12-07T01:31:46.000000Z",
     "product_vendor": "Amazon",
