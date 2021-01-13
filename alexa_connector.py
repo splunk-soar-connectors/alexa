@@ -1,13 +1,9 @@
-# --
 # File: alexa_connector.py
+# Copyright (c) 2016-2021 Splunk Inc.
 #
-# Copyright (c) 2016-2018 Splunk Inc.
-#
-# SPLUNK CONFIDENTIAL – Use or disclosure of this material in whole or in part
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
-#
-#
-# --
+
 
 # Phantom imports
 import phantom.app as phantom
@@ -15,10 +11,17 @@ from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
 
 # THIS Connector imports
-from alexa_consts import *
+try:
+    from alexa_consts import *
+except ImportError:
+    from .alexa_consts import *
 
 # Any imports that this app may need that are not phantom-based or app-based
-from urllib import urlencode
+try:
+    from urllib import urlencode
+except:
+    from urllib.parse import urlencode
+
 import datetime
 import hashlib
 import hmac
@@ -222,6 +225,6 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
 
         # Dump the return value
-        print ret_val
+        print(ret_val)
 
     exit(0)
