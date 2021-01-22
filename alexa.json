@@ -3,18 +3,22 @@
     "name": "Alexa",
     "description": "This app implements investigative actions using Alexa Web Information Services",
     "type": "reputation",
-    "main_module": "alexa_connector.pyc",
-    "app_version": "1.0.9",
-    "utctime_updated": "2018-09-28T00:03:19.000000Z",
+    "main_module": "alexa_connector.py",
+    "app_version": "2.0.1",
+    "utctime_updated": "2021-01-13T18:55:15.000000Z",
     "product_vendor": "Amazon",
     "product_name": "Alexa",
     "product_version_regex": ".*",
     "logo": "logo_alexa.svg",
     "logo_dark": "logo_alexa_dark.svg",
-    "min_phantom_version": "3.5.210",
+    "min_phantom_version": "4.9.39220",
+    "latest_tested_versions": [
+        "AWIS v1.0"
+    ],
     "publisher": "Phantom",
     "package_name": "phantom_alexa",
-    "license": "Copyright (c) 2016-2018 Splunk Inc.",
+    "license": "Copyright (c) 2016-2021 Splunk Inc.",
+    "python_version": "3",
     "configuration": {
         "access_id": {
             "description": "Access ID",
@@ -35,8 +39,8 @@
             "description": "Gets information about a URL",
             "verbose": "<p>Information this action gets:</p><ul><li>Up to 11 related links</li><li>Up to 3 DMOZ categories</li><li>Traffic rank</li><li>Usage statistics</li><li>Title, description, and date the site was created</li><li>Whether the site is likely to contain adult content</li><li>Median load time and percent of known sites that are slower</li><li>Content language code and character-encoding of the majority of pages</li></ul>",
             "type": "investigate",
-            "read_only": true,
             "identifier": "lookup_url",
+            "read_only": true,
             "parameters": {
                 "url": {
                     "description": "URL to query",
@@ -50,16 +54,14 @@
                     "primary": true
                 }
             },
-            "render": {
-                "width": 12,
-                "title": "Lookup Url",
-                "type": "json",
-                "height": 5
-            },
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.url",
@@ -102,7 +104,15 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:Keywords",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:Keywords.aws:Keyword",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:Language",
                     "data_type": "string"
                 },
                 {
@@ -111,6 +121,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:LinksInCount",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:ContentData.aws:OwnedDomains",
                     "data_type": "string"
                 },
                 {
@@ -161,6 +175,10 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:DataUrl.#text",
                     "data_type": "string"
                 },
@@ -174,6 +192,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:Related.aws:RelatedLinks.aws:RelatedLink.*.aws:Title",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:ContributingSubdomains",
                     "data_type": "string"
                 },
                 {
@@ -206,6 +228,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:Rank",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.aws:UrlInfoResponse.aws:Response.aws:UrlInfoResult.aws:Alexa.aws:TrafficData.aws:UsageStatistics",
                     "data_type": "string"
                 },
                 {
@@ -269,22 +295,45 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.summary.rank",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "example_values": [
+                        1
+                    ],
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "example_values": [
+                        1
+                    ],
+                    "data_type": "numeric"
                 }
             ],
+            "render": {
+                "width": 12,
+                "title": "Lookup Url",
+                "type": "json",
+                "height": 5
+            },
             "versions": "EQ(*)"
         },
         {
             "action": "test connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "",
             "type": "test",
-            "read_only": true,
             "identifier": "test_connectivity",
-            "render": {},
-            "output": [],
+            "read_only": true,
             "parameters": {},
+            "output": [],
+            "render": {},
             "versions": "EQ(*)"
         }
     ]
