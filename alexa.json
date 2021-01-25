@@ -4,8 +4,8 @@
     "description": "This app implements investigative actions using Alexa Web Information Services",
     "type": "reputation",
     "main_module": "alexa_connector.py",
-    "app_version": "2.0.2",
-    "utctime_updated": "2021-01-22T20:25:17.000000Z",
+    "app_version": "2.0.3",
+    "utctime_updated": "2021-01-25T10:07:08.000000Z",
     "product_vendor": "Amazon",
     "product_name": "Alexa",
     "product_version_regex": ".*",
@@ -15,7 +15,7 @@
     "latest_tested_versions": [
         "AWIS v1.0"
     ],
-    "publisher": "Phantom",
+    "publisher": "Splunk",
     "package_name": "phantom_alexa",
     "license": "Copyright (c) 2016-2021 Splunk Inc.",
     "python_version": "3",
