@@ -15,7 +15,7 @@
     "latest_tested_versions": [
         "AWIS v1.0"
     ],
-    "publisher": "Phantom",
+    "publisher": "Splunk",
     "package_name": "phantom_alexa",
     "license": "Copyright (c) 2016-2021 Splunk Inc.",
     "python_version": "3",
