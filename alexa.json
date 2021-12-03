@@ -12,6 +12,7 @@
     "logo": "logo_alexa.svg",
     "logo_dark": "logo_alexa_dark.svg",
     "min_phantom_version": "4.9.39220",
+    "fips_compliant": true,
     "latest_tested_versions": [
         "AWIS v1.0"
     ],
