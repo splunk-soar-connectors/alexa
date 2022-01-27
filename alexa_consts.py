@@ -15,5 +15,6 @@
 ALEXA_AWIS_HOST = "awis.amazonaws.com"
 ALEXA_JSON_URL = "url"
 ALEXA_CONFIG_ACCESS_ID = "access_id"
-ALEXA_CONFIG_SECRET_KEY = "secret_key"
+ALEXA_CONFIG_SECRET_KEY = "secret_key"  # pragma: allowlist secret
 ALEXA_ACTION_RESPONSE_GROUP = "Related,TrafficData,ContentData"
+ALEXA_DEFAULT_REQUEST_TIMEOUT = 30  # in seconds
