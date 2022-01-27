@@ -38,7 +38,7 @@
         {
             "action": "lookup url",
             "description": "Gets information about a URL",
-            "verbose": "<p>Information this action gets:</p><ul><li>Up to 11 related links</li><li>Up to 3 DMOZ categories</li><li>Traffic rank</li><li>Usage statistics</li><li>Title, description, and date the site was created</li><li>Whether the site is likely to contain adult content</li><li>Median load time and percent of known sites that are slower</li><li>Content language code and character-encoding of the majority of pages</li></ul>",
+            "verbose": "<p>Information this action gets:</p><ul><li>Up to 11 related links</li><li>Up to 3 DMOZ categories</li><li>Traffic rank</li><li>Usage statistics</li><li>Title, description, and date the site was created</li><li>Whether the site is likely to contain adult content</li><li>Median load time and percent of known sites that are slower</li><li>Content language code and character-encoding of the majority of pages</li></ul>.",
             "type": "investigate",
             "identifier": "lookup_url",
             "read_only": true,
