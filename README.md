@@ -2,11 +2,11 @@
 # Alexa
 
 Publisher: Splunk  
-Connector Version: 2\.0\.4  
+Connector Version: 2\.0\.7  
 Product Vendor: Amazon  
 Product Name: Alexa  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 4\.9\.39220  
+Minimum Product Version: 5\.1\.0  
 
 This app implements investigative actions using Alexa Web Information Services
 
@@ -28,7 +28,7 @@ Gets information about a URL
 Type: **investigate**  
 Read only: **True**
 
-<p>Information this action gets\:</p><ul><li>Up to 11 related links</li><li>Up to 3 DMOZ categories</li><li>Traffic rank</li><li>Usage statistics</li><li>Title, description, and date the site was created</li><li>Whether the site is likely to contain adult content</li><li>Median load time and percent of known sites that are slower</li><li>Content language code and character\-encoding of the majority of pages</li></ul>
+<p>Information this action gets\:</p><ul><li>Up to 11 related links</li><li>Up to 3 DMOZ categories</li><li>Traffic rank</li><li>Usage statistics</li><li>Title, description, and date the site was created</li><li>Whether the site is likely to contain adult content</li><li>Median load time and percent of known sites that are slower</li><li>Content language code and character\-encoding of the majority of pages</li></ul>\.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
