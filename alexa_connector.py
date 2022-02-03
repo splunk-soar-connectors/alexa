@@ -1,14 +1,23 @@
 # File: alexa_connector.py
-# Copyright (c) 2016-2021 Splunk Inc.
 #
-# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
-# without a valid written license from Splunk Inc. is PROHIBITED.
-
-
+# Copyright (c) 2016-2022 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
 # Phantom imports
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 # THIS Connector imports
 try:
@@ -25,9 +34,10 @@ except:
 import datetime
 import hashlib
 import hmac
-import xmltodict
+
 import requests
 import simplejson as json
+import xmltodict
 
 
 class AlexaConnector(BaseConnector):
@@ -57,7 +67,8 @@ class AlexaConnector(BaseConnector):
         try:
             response = requests.get(url,
                                     headers=headers,
-                                    verify=True)
+                                    verify=True,
+                                    timeout=ALEXA_DEFAULT_REQUEST_TIMEOUT)
         except Exception as e:
             return phantom.APP_ERROR, "Could not make REST call {}".format(e)
 
@@ -130,7 +141,8 @@ class AlexaConnector(BaseConnector):
         signature = hmac.new(signing_key, string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
 
         # Add signing information to the request
-        authorization_header = '{} Credential={}/{}, SignedHeaders={}, Signature={}'.format(algorithm, self._access_id, credential_scope, signed_headers, signature)
+        authorization_header = '{} Credential={}/{}, SignedHeaders={}, Signature={}'.format(
+            algorithm, self._access_id, credential_scope, signed_headers, signature)
         headers = {'X-Amz-Date': amzdate, 'Authorization': authorization_header, 'Content-Type': 'application/xml', 'Accept': 'application/xml'}
 
         # Create request url
@@ -203,6 +215,7 @@ if __name__ == '__main__':
 
     # Imports
     import sys
+
     import pudb
 
     # Breakpoint at runtime
@@ -227,4 +240,4 @@ if __name__ == '__main__':
         # Dump the return value
         print(ret_val)
 
-    exit(0)
+    sys.exit(0)
